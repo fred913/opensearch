@@ -1,0 +1,7 @@
+-- SQLite
+CREATE TABLE DATA(
+   ID INTEGER PRIMARY KEY              NOT NULL,
+   TITLE          VARCHAR(255)     NOT NULL,
+   URL            VARCHAR(255)     NOT NULL,
+   DESCRIPTION    VARCHAR(255)     NOT NULL
+);

@@ -16,5 +16,14 @@
             "command": "extension.execute",
             "priority": 4
         }
-    ]
+    ],
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "opensearch",
+            "database": "${workspaceFolder:opensearch}/data.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
 }
