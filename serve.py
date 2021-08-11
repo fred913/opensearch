@@ -12,6 +12,7 @@ class Server:
         self.conn.close()
 
     def add_url(self, title, url, description):
+        print("add:", title, url, description)
         url = self.clean_url(url)
         if self.url_exists(url):
             return
@@ -30,10 +31,10 @@ VALUES (?, ?, ?, ?);"""
     def search(self, keywords: Iterable[AnyStr]):
         if len(keywords) == 0:
             return []
-        sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ? OR DESCRIPTION LIKE ?;"""
+        sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ?;"""
         search_like = "%%%s%%" % (str("%".join(keywords)),)
         result = self.conn.execute(
-            sent, (search_like, search_like, search_like))
+            sent, (search_like, search_like))
         return list(result)
 
     def clean_url(self, url):
@@ -42,9 +43,16 @@ VALUES (?, ?, ?, ?);"""
         return url
 
 
-# if __name__ == "__main__":
-#     server = Server()
-#     server.add_url("baidu", "https://www.baidu.com/", "baidu official")
-#     server.add_url("bilibili", "https://www.bilibili.com/", "bilibili")
-#     print(server.search([]))
-#     server.close()
+if __name__ == "__main__":
+    server = Server()
+    s = input("搜索：")
+    keywords = []
+    for i in s.split():
+        if i:
+            keywords.append(i)
+    print(keywords)
+    result = server.search(keywords)
+    print(result)
+    for i in result:
+        print(i)
+    server.close()
