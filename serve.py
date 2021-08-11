@@ -28,9 +28,12 @@ VALUES (?, ?, ?, ?);"""
         return len(list(result)) > 0
 
     def search(self, keywords: Iterable[AnyStr]):
-        sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ?;"""
+        if len(keywords) == 0:
+            return []
+        sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ? OR DESCRIPTION LIKE ?;"""
         search_like = "%%%s%%" % (str("%".join(keywords)),)
-        result = self.conn.execute(sent, (search_like, search_like))
+        result = self.conn.execute(
+            sent, (search_like, search_like, search_like))
         return list(result)
 
     def clean_url(self, url):
@@ -41,7 +44,7 @@ VALUES (?, ?, ?, ?);"""
 
 # if __name__ == "__main__":
 #     server = Server()
-#     try:
 #     server.add_url("baidu", "https://www.baidu.com/", "baidu official")
-#     print(server.search(['baidu']))
+#     server.add_url("bilibili", "https://www.bilibili.com/", "bilibili")
+#     print(server.search([]))
 #     server.close()
