@@ -175,6 +175,10 @@ while True:
                     continue
                 if i_noparam.endswith(".rar"):
                     continue
+                if i_noparam.endswith(".woff"):
+                    continue
+                if i_noparam.endswith(".woff2"):
+                    continue
 
                 if i_noparam.endswith("ajax.php"):
                     continue
