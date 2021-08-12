@@ -118,3 +118,4 @@ dmypy.json
 .idea/
 mysql_config.py
 *-test.py
+*_test.py
