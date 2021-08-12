@@ -4,6 +4,7 @@ import requests
 import html_parser
 from bs4 import BeautifulSoup
 import queue
+import sys
 
 
 def refactor_url(parent, uri):
@@ -70,7 +71,7 @@ while True:
             response = session.get(url, headers={
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.67",
                 "Upgrade-Insecure-Requests": "1"
-            }, timeout=1, stream=True)
+            }, timeout=1 if "--timeout" not in sys.argv else 8, stream=True)
             if response.headers.get("content-type").startswith("text/"):
                 response_text = response.content
             else:
@@ -89,7 +90,7 @@ while True:
             continue
         except Exception:
             print("get url error")
-            import traceback
+            # import traceback
             # traceback.print_exc()
             continue
         encoding = auto_encoding(response_text)
@@ -150,6 +151,18 @@ while True:
                 if i_noparam.endswith(".svg"):
                     continue
                 if i_noparam.endswith(".webp"):
+                    continue
+                if i_noparam.endswith(".mp3"):
+                    continue
+                if i_noparam.endswith(".mp4"):
+                    continue
+                if i_noparam.endswith(".ts"):
+                    continue
+                if i_noparam.endswith(".hs"):
+                    continue
+                if i_noparam.endswith(".m3u"):
+                    continue
+                if i_noparam.endswith(".m3u8"):
                     continue
                 if i_noparam.endswith("ajax.php"):
                     continue

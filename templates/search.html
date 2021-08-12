@@ -18,7 +18,7 @@
         </div>
         {% for _internal_id, title, url, description in result %}
         <div class="search-result mdui-typo">
-            <h6><a href="{{ url }}">{{ title }}</a><br><small class="mdui-text-truncate" style="max-width: 80px;">{{ url }}</small></h6>
+            <h6><a href="{{ url }}" target="_blank" title="点击以在新窗口打开">{{ title }}</a><br><small class="mdui-text-truncate" style="max-width: 80px;" title="双击复制该url">{{ url }}</small></h6>
             <p><small>{{ description }}</small></p>
             <hr />
         </div>

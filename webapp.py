@@ -10,7 +10,7 @@ def change_server(resp: FlaskResponse):
     return resp
 
 
-@app.route("/search")
+@app.route("/search-result-page")
 def search_page():
     word = request.args.get("q")
     result = search(word)
