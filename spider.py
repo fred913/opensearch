@@ -27,7 +27,7 @@ def clean_url(url):
     return url
 
 
-def auto_encoding(b: bytes):
+def auto_encoding(b: bytes, ltry: str = None):
     try:
         b.decode("utf-8")
         return "utf-8"
@@ -40,7 +40,11 @@ def auto_encoding(b: bytes):
                 b.decode("gbk")
                 return "gbk"
             except Exception:
-                return None
+                try:
+                    b.decode(ltry)
+                    return ltry
+                except Exception:
+                    return None
 
 
 session = requests.Session()
@@ -51,7 +55,7 @@ server = Server()
 # bs=bs4.BeautifulSoup()
 
 starter = input("Start from?")
-tasks = queue.Queue(maxsize=300)
+tasks = queue.Queue()
 tasks.put((starter, 0))
 while True:
     try:
@@ -66,32 +70,34 @@ while True:
             break
         print("parse url (level %d):" % (level,), url)
         try:
-            response = requests.get(url, headers={
+            response = session.get(url, headers={
                 "User-Agent": "OpenSearchSpider/1.0",
                 "Upgrade-Insecure-Requests": "1"
-            }, timeout=0.8, stream=True)
-
-            if response.status_code in [301, 302, 307]:
-                tasks.put(refactor_url(url, response.headers.get("location")))
-                response.close()
-                continue
+            }, timeout=0.5, stream=True)
             if response.headers.get("content-type").startswith("text/"):
                 response_text = response.content
             else:
                 print("Wrong content type:",
                       response.headers.get("content-type"))
+                continue
             assert response.status_code == 200
+        except requests.exceptions.ReadTimeout:
+            continue
+
         except requests.exceptions.InvalidURL:
+            continue
+
+        except AssertionError:
             continue
         except Exception:
             print("get url error. continue...")
             import traceback
-            traceback.print_exc()
+            # traceback.print_exc()
             continue
+        encoding = None
         if "charset=" in response.headers.get("content-type"):
             encoding = response.headers.get("content-type").split("=")[-1]
-        else:
-            encoding = auto_encoding(response_text)
+        encoding = auto_encoding(response_text, encoding)
         if encoding is None:
             print("binary; skipping")
             continue
@@ -105,7 +111,9 @@ while True:
                 continue
             sub_url.add(clean_url(i))
         soup = BeautifulSoup(response_text, "lxml")
-        title = soup.title.string if soup.title else "未找到标题"
+        title = soup.title.string if soup.title else None
+        if title is None:
+            continue
         try:
             description = soup.select("meta[name=description]")[
                 0].attrs['content']
@@ -122,9 +130,39 @@ while True:
             try:
                 if "mailto:" in i:
                     continue
-                if server.url_exists(refactor_url(url, i)):
+                if "javascript:" in i:
                     continue
-                tasks.put((refactor_url(url, i), level+1), block=False)
+                i_noparam = i.split("?")[0]
+                if i_noparam.endswith(".jpg"):
+                    continue
+                if i_noparam.endswith(".gif"):
+                    continue
+                if i_noparam.endswith(".png"):
+                    continue
+                if i_noparam.endswith(".zip"):
+                    continue
+                if i_noparam.endswith(".ico"):
+                    continue
+                if i_noparam.endswith(".js"):
+                    continue
+                if i_noparam.endswith(".css"):
+                    continue
+                if i_noparam.endswith(".svg"):
+                    continue
+                if i_noparam.endswith(".webp"):
+                    continue
+                if i_noparam.endswith("ajax.php"):
+                    continue
+                if i.startswith("https://bbs.yhdzz.cn/oauth/"):
+                    continue
+                if i.startswith("http://wpa.qq.com/msgrd"):
+                    continue
+                if "cnzz.com/z_stat.php" in i:
+                    continue
+                # if not server.url_exists(clean_url(refactor_url(url, i))):
+                tasks.put(
+                    (clean_url(refactor_url(url, i)), level+1), block=False)
+
             except queue.Full:
                 continue
     except KeyboardInterrupt:
