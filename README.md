@@ -13,6 +13,8 @@
  - Just replace `serve.py` by `sqlite_serve.py`.
  - But you need to add data manually
  - Also, you may remove the existing `data.db`
- - You can initialize a database via `init.sql`
+ - You can initialize a **NEW** database via `init.sql`
  - And delete the dirty results via `delete.sql`
  - Have fun with OpenSearch!
+ - By the way, we have prepared some data for you.
+   You can import from the `import.sql` and you'll get 10000+ data
