@@ -56,15 +56,12 @@ server = Server()
 
 starter = input("Start from?")
 tasks = queue.Queue()
-tasks.put((starter, 0))
+tasks.put(starter)
 while True:
     try:
         print("还剩%d个url" % (tasks.qsize(),))
         try:
-            url, level = tasks.get(block=False)
-            if level > 4:
-                print("level too high; continue")
-                continue
+            url = tasks.get(block=False)
         except queue.Empty:
             print("All finished. exiting...")
             break
@@ -73,7 +70,7 @@ while True:
             response = session.get(url, headers={
                 "User-Agent": "OpenSearchSpider/1.0",
                 "Upgrade-Insecure-Requests": "1"
-            }, timeout=0.5, stream=True)
+            }, timeout=1, stream=True)
             if response.headers.get("content-type").startswith("text/"):
                 response_text = response.content
             else:
@@ -83,10 +80,8 @@ while True:
             assert response.status_code == 200
         except requests.exceptions.ReadTimeout:
             continue
-
         except requests.exceptions.InvalidURL:
             continue
-
         except AssertionError:
             continue
         except Exception:
@@ -161,7 +156,7 @@ while True:
                     continue
                 # if not server.url_exists(clean_url(refactor_url(url, i))):
                 tasks.put(
-                    (clean_url(refactor_url(url, i)), level+1), block=False)
+                    (refactor_url(url, i)), block=False)
 
             except queue.Full:
                 continue

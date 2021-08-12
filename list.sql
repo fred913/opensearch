@@ -1,1 +1,1 @@
-SELECT * FROM DATA WHERE URL="https://bbs.yhdzz.cn/links";
+SELECT * FROM DATA;
