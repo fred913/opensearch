@@ -1,3 +1,4 @@
+# coding: utf-8
 from serve import Server
 import requests
 import html_parser
@@ -66,25 +67,52 @@ while True:
         print("parse url (level %d):" % (level,), url)
         try:
             response = requests.get(url, headers={
-                "User-Agent": "OpenSearchSpider/1.0"
-            }, timeout=0.8)
+                "User-Agent": "OpenSearchSpider/1.0",
+                "Upgrade-Insecure-Requests": "1"
+            }, timeout=0.8, stream=True)
+
+            if response.status_code in [301, 302, 307]:
+                tasks.put(refactor_url(url, response.headers.get("location")))
+                response.close()
+                continue
+            if response.headers.get("content-type").startswith("text/"):
+                response_text = response.content
+            else:
+                print("Wrong content type:",
+                      response.headers.get("content-type"))
             assert response.status_code == 200
+        except requests.exceptions.InvalidURL:
+            continue
         except Exception:
             print("get url error. continue...")
+            import traceback
+            traceback.print_exc()
             continue
-        response.encoding = auto_encoding(response.content)
+        if "charset=" in response.headers.get("content-type"):
+            encoding = response.headers.get("content-type").split("=")[-1]
+        else:
+            encoding = auto_encoding(response_text)
+        if encoding is None:
+            print("binary; skipping")
+            continue
+        else:
+            print("encoding:", encoding)
+        response_text = response_text.decode(encoding)
+        # print(response_text)
         sub_url = set()
-        for i in html_parser.re_get_url_list(response.text):
+        for i in html_parser.re_get_url_list(response_text):
             if len(i) > 90:
                 continue
             sub_url.add(clean_url(i))
-        soup = BeautifulSoup(response.text, "lxml")
+        soup = BeautifulSoup(response_text, "lxml")
         title = soup.title.string if soup.title else "未找到标题"
         try:
-            description = soup.select("meta[name=description]")[0].attrs['content']
+            description = soup.select("meta[name=description]")[
+                0].attrs['content']
         except:
             description = "无法获取此页的描述。"
-        server.add_url(title=title, url=url, description=description)
+        if not server.url_exists(url):
+            server.add_url(title=title, url=url, description=description)
         for i in soup.select("a[href]"):
             if len(i.attrs.get('href')) > 90:
                 continue
@@ -93,6 +121,8 @@ while True:
         for i in sub_url:
             try:
                 if "mailto:" in i:
+                    continue
+                if server.url_exists(refactor_url(url, i)):
                     continue
                 tasks.put((refactor_url(url, i), level+1), block=False)
             except queue.Full:

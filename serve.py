@@ -1,4 +1,5 @@
-# not app
+# coding: utf-8
+# # not app
 # command & db only
 import sqlite3
 from typing import *
