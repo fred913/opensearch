@@ -3,11 +3,16 @@
 # command & db only
 import sqlite3
 from typing import *
+import MySQLdb
+import mysql_config
+# NOTE: please create your-own mysql_config.py that contains your mysql configuration!
 
 
 class Server:
     def __init__(self):
-        self.conn = sqlite3.connect('./data.db')
+        # self.conn = sqlite3.connect('./data.db')
+        self.conn = MySQLdb.connect(
+            mysql_config.HOST, mysql_config.USER, mysql_config.PASSWORD, mysql_config.DATABASE, charset='utf8')
 
     def close(self):
         self.conn.close()
