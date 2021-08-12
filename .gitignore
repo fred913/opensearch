@@ -117,3 +117,4 @@ dmypy.json
 .vscode/
 .idea/
 mysql_config.py
+*.test.py
