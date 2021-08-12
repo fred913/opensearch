@@ -12,10 +12,11 @@ def change_server(resp: FlaskResponse):
 
 @app.route("/search")
 def search_page():
-    return render_template("search.html", word=request.args.get("q"))
+    word = request.args.get("q")
+    result = search(word)
+    return render_template("search.html", word=word, result=result, result_count=len(result))
 
 
-@app.template_global("search")
 def search(word):
     server = Server()
     if not word:

@@ -13,7 +13,10 @@
 
 <body>
     <div class="mdui-container">
-        {% for _internal_id, title, url, description in search(word) %}
+        <div class="mdui-typo">
+            <p>搜索 <mark>{{ word }}</mark> 共获得 {{ result_count }} 个结果</p>
+        </div>
+        {% for _internal_id, title, url, description in result %}
         <div class="search-result mdui-typo">
             <h6><a href="{{ url }}">{{ title }}</a><br><small class="mdui-text-truncate" style="max-width: 80px;">{{ url }}</small></h6>
             <p><small>{{ description }}</small></p>

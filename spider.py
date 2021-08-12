@@ -128,6 +128,8 @@ while True:
             try:
                 if "mailto:" in i:
                     continue
+                if "tel:" in i:
+                    continue
                 if "javascript:" in i:
                     continue
                 i_noparam = i.split("?")[0]
