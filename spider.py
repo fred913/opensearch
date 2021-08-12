@@ -65,7 +65,7 @@ while True:
         except queue.Empty:
             print("All finished. exiting...")
             break
-        print("parse url (level %d):" % (level,), url)
+        print("parse url:", url)
         try:
             response = session.get(url, headers={
                 "User-Agent": "OpenSearchSpider/1.0",
@@ -89,10 +89,7 @@ while True:
             import traceback
             # traceback.print_exc()
             continue
-        encoding = None
-        if "charset=" in response.headers.get("content-type"):
-            encoding = response.headers.get("content-type").split("=")[-1]
-        encoding = auto_encoding(response_text, encoding)
+        encoding = auto_encoding(response_text)
         if encoding is None:
             print("binary; skipping")
             continue
@@ -153,6 +150,8 @@ while True:
                 if i.startswith("http://wpa.qq.com/msgrd"):
                     continue
                 if "cnzz.com/z_stat.php" in i:
+                    continue
+                if "/login" in i or "/user-sign" in i:
                     continue
                 # if not server.url_exists(clean_url(refactor_url(url, i))):
                 tasks.put(
