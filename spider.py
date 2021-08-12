@@ -63,7 +63,7 @@ tasks = queue.Queue()
 tasks.put(starter)
 while True:
     try:
-        print("还剩%d个url" % (tasks.qsize(),))
+        print("%d URL(s) left" % (tasks.qsize(),))
         try:
             url = clean_url(tasks.get(block=False))
         except queue.Empty:
