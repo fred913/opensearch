@@ -116,7 +116,8 @@ while True:
                 0].attrs['content']
         except:
             description = "无法获取此页的描述。"
-        server.add_url(title=title, url=url, description=description)
+        server.add_url(title=title.strip(), url=url.strip(),
+                       description=description.strip())
         for i in soup.select("a[href]"):
             if len(i.attrs.get('href')) > 150:
                 # print("url too long")
