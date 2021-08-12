@@ -29,8 +29,15 @@ VALUES (?, ?, ?, ?);"""
         result = self.conn.execute(sent, (url, ))
         return len(list(result)) > 0
 
-    def search(self, keywords: Iterable[AnyStr]):
-        if len(keywords) == 0:
+    def search(self, orig_keywords: Iterable[AnyStr]):
+        keywords = []
+        for i in orig_keywords:
+            if i:
+                i = i.replace("[", "[[]")
+                i = i.replace("_", "[_]")
+                i = i.replace("%", "[%]")
+                keywords.append(i)
+        if len(orig_keywords) == 0:
             return []
         sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ?;"""
         search_like = "%%%s%%" % (str("%".join(keywords)),)

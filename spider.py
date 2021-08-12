@@ -10,6 +10,8 @@ import sys
 def refactor_url(parent, uri):
     uri = uri.split("#")[0]
     parent = parent.split("#")[0]
+    if uri.startswith("?"):
+        return parent+uri
     if uri.startswith("http://") or uri.startswith("https://"):
         return uri
     if uri.startswith("//"):
@@ -25,6 +27,7 @@ def clean_url(url):
     while url.endswith("/"):
         url = url[:-1]
     url = url.split("#")[0]
+    url = url.replace("/./", "/")
     return url
 
 
@@ -62,7 +65,7 @@ while True:
     try:
         print("还剩%d个url" % (tasks.qsize(),))
         try:
-            url = tasks.get(block=False)
+            url = clean_url(tasks.get(block=False))
         except queue.Empty:
             print("All finished. exiting...")
             break
@@ -164,6 +167,15 @@ while True:
                     continue
                 if i_noparam.endswith(".m3u8"):
                     continue
+                if i_noparam.endswith(".gz"):
+                    continue
+                if i_noparam.endswith(".zip"):
+                    continue
+                if i_noparam.endswith(".7z"):
+                    continue
+                if i_noparam.endswith(".rar"):
+                    continue
+
                 if i_noparam.endswith("ajax.php"):
                     continue
                 if i.startswith("https://bbs.yhdzz.cn/oauth/"):
