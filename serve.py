@@ -10,7 +10,6 @@ import mysql_config
 
 class Server:
     def __init__(self):
-        # self.conn = sqlite3.connect('./data.db')
         self.conn = MySQLdb.connect(
             mysql_config.HOST, mysql_config.USER, mysql_config.PASSWORD, mysql_config.DATABASE, charset='utf8')
 
@@ -23,15 +22,18 @@ class Server:
         if self.url_exists(url):
             return
         sent = """INSERT INTO DATA (ID, TITLE, URL, DESCRIPTION) 
-VALUES (?, ?, ?, ?);"""
+VALUES (%s, %s, %s, %s);"""
         # insert safely
-        self.conn.execute(sent, (None, title, url, description))
+        cursor = self.conn.cursor()
+        cursor.execute(sent, (None, title, url, description))
         self.conn.commit()
 
     def url_exists(self, url):
         url = url.strip()
-        sent = """SELECT * FROM DATA WHERE URL=?;"""
-        result = self.conn.execute(sent, (url, ))
+        sent = """SELECT * FROM DATA WHERE URL=%s;"""
+        cursor = self.conn.cursor()
+        cursor.execute(sent, (url, ))
+        result = cursor.fetchall()
         return len(list(result)) > 0
 
     def search(self, orig_keywords: Iterable[AnyStr]):
@@ -44,10 +46,13 @@ VALUES (?, ?, ?, ?);"""
                 keywords.append(i)
         if len(orig_keywords) == 0:
             return []
-        sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ?;"""
+        sent = """SELECT * FROM DATA WHERE TITLE LIKE %s OR URL LIKE %s;"""
         search_like = "%%%s%%" % (str("%".join(keywords)),)
-        result = self.conn.execute(
+        # print(search_like)
+        cursor = self.conn.cursor()
+        cursor.execute(
             sent, (search_like, search_like))
+        result = cursor.fetchall()
         return list(result)
 
     def clean_url(self, url):
