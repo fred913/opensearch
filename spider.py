@@ -68,7 +68,7 @@ while True:
         print("parse url:", url)
         try:
             response = session.get(url, headers={
-                "User-Agent": "OpenSearchSpider/1.0",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.67",
                 "Upgrade-Insecure-Requests": "1"
             }, timeout=1, stream=True)
             if response.headers.get("content-type").startswith("text/"):
@@ -79,13 +79,16 @@ while True:
                 continue
             assert response.status_code == 200
         except requests.exceptions.ReadTimeout:
+            print("read timeout")
             continue
         except requests.exceptions.InvalidURL:
+            print("invalid url")
             continue
         except AssertionError:
+            print("invalid status code")
             continue
         except Exception:
-            print("get url error. continue...")
+            print("get url error")
             import traceback
             # traceback.print_exc()
             continue
@@ -99,22 +102,24 @@ while True:
         # print(response_text)
         sub_url = set()
         for i in html_parser.re_get_url_list(response_text):
-            if len(i) > 90:
+            if len(i) > 150:
+                # print("url too long")
                 continue
             sub_url.add(clean_url(i))
         soup = BeautifulSoup(response_text, "lxml")
         title = soup.title.string if soup.title else None
         if title is None:
+            print("no title")
             continue
         try:
             description = soup.select("meta[name=description]")[
                 0].attrs['content']
         except:
             description = "无法获取此页的描述。"
-        if not server.url_exists(url):
-            server.add_url(title=title, url=url, description=description)
+        server.add_url(title=title, url=url, description=description)
         for i in soup.select("a[href]"):
-            if len(i.attrs.get('href')) > 90:
+            if len(i.attrs.get('href')) > 150:
+                # print("url too long")
                 continue
             if i.attrs.get('href'):
                 sub_url.add(clean_url(i.attrs.get('href')))
