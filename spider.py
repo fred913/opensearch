@@ -118,7 +118,7 @@ while True:
         try:
             description = soup.select("meta[name=description]")[
                 0].attrs['content']
-        except:
+        except Exception:
             description = "无法获取此页的描述。"
         server.add_url(title=title.strip(), url=url.strip(),
                        description=description.strip())
