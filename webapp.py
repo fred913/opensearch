@@ -1,5 +1,5 @@
 from serve import Server
-from flask import Flask, request, redirect, jsonify, Response as FlaskResponse
+from flask import Flask, request, redirect, jsonify, Response as FlaskResponse, render_template
 app = Flask("webapp")
 
 
@@ -10,8 +10,30 @@ def change_server(resp: FlaskResponse):
     return resp
 
 
+@app.route("/search")
+def search_page():
+    return render_template("search.html", word=request.args.get("q"))
+
+
+@app.template_global("search")
+def search(word):
+    server = Server()
+    if not word:
+        return []
+    kw = []
+    for i in word.strip().split():
+        if not i:
+            continue
+        kw.append(i)
+    if len(kw) == 0:
+        return []
+    result = server.search(kw)
+    server.close()
+    return result
+
+
 @app.route("/opensearch_api")
-def search():
+def webapi_search():
     server = Server()
     word = request.args.get("q")
     if not word:

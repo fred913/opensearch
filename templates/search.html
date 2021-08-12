@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenSearch</title>
+    <script src="/static/jquery/jquery.min.js"></script>
+    <script src="/static/mdui/js/mdui.min.js"></script>
+    <link rel="stylesheet" href="/static/mdui/css/mdui.min.css">
+</head>
+
+<body>
+    <div class="mdui-container">
+        {% for _internal_id, title, url, description in search(word) %}
+        <div class="search-result mdui-typo">
+            <h6><a href="{{ url }}">{{ title }}</a><br><small class="mdui-text-truncate" style="max-width: 80px;">{{ url }}</small></h6>
+            <p><small>{{ description }}</small></p>
+            <hr />
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>
