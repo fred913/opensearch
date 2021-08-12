@@ -16,5 +16,5 @@
  - 你也可以删除现有的`data.db`，并自行创建新的数据库
  - 请使用`init.sql`初始化一个**新的**数据库（SQLite直接使用，MySQL还需要增加`AUTO_INCREMENT`标签）
  - `delete.sql`也可以用于删除一些冗余/无用的数据
- - 现在去玩玩OpenSearch吧的的
+ - 现在去玩玩OpenSearch吧
  - 另外，我们也提前爬取好了一大堆数据。直接导入`import.sql`，有一个10000+数据的大礼包等着你😁
