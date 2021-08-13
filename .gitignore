@@ -119,3 +119,4 @@ dmypy.json
 mysql_config.py
 *-test.py
 *_test.py
+config.json

@@ -8,13 +8,6 @@
  - See the following part.
 
 ## SQL preparation
- - By default, OpenSearch needs a MySQL server as a database.
- - But you can also use a SQLite server for a lite usage
- - Just replace `serve.py` by `sqlite_serve.py`.
- - But you need to add data manually
- - Also, you may remove the existing `data.db`
- - You can initialize a **NEW** database via `init.sql`
- - And delete the dirty results via `delete.sql`
- - Have fun with OpenSearch!
- - By the way, we have prepared some data for you.
-   You can import from the `import.sql` and you'll get 10000+ data
+ - By default, OpenSearch accesses the public sql to get data.
+ - But you can configure your-own sql server - 
+    just edit `config.json` (generated after running `serve.py`)

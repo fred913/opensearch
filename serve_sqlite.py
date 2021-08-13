@@ -6,8 +6,10 @@ from typing import *
 
 
 class Server:
+    path = ""
+
     def __init__(self):
-        self.conn = sqlite3.connect('./data.db')
+        self.conn = sqlite3.connect(Server.path)
 
     def close(self):
         self.conn.close()
@@ -49,18 +51,3 @@ VALUES (?, ?, ?, ?);"""
         while url.endswith("/"):
             url = url[:-1]
         return url
-
-
-if __name__ == "__main__":
-    server = Server()
-    s = input("搜索：")
-    keywords = []
-    for i in s.split():
-        if i:
-            keywords.append(i)
-    print(keywords)
-    result = server.search(keywords)
-    print(result)
-    for i in result:
-        print(i)
-    server.close()
