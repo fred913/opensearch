@@ -31,6 +31,8 @@ except Exception:
 class ServePublic:
     def __init__(self):
         self.session = requests.Session()
+        raise ValueError(
+            "There are bugs in the public server so we disable it. Please revert to your-own sql")
 
     def add_url(self, title, url, description):
         raise ValueError(
@@ -41,7 +43,9 @@ class ServePublic:
             "Public driver does not support url_exists. Please use SQLite or MySQL")
 
     def search(self, kwds):
-        self.session.post("https://opensearchpublic.ft2.club/search_api")
+        # self.session.post("https://opensearchpublic.ft2.club/search_api")
+        raise ValueError(
+            "There are bugs in the public server so we disable it. Please revert to your-own sql")
 
 
 if config["db"]['sqlite']:

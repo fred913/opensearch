@@ -41,10 +41,10 @@ VALUES (?, ?, ?, ?);"""
                 keywords.append(i)
         if len(orig_keywords) == 0:
             return []
-        sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ?;"""
+        sent = """SELECT * FROM DATA WHERE TITLE LIKE ? OR URL LIKE ? OR DESCRIPTION LIKE ?;"""
         search_like = "%%%s%%" % (str("%".join(keywords)),)
         result = self.conn.execute(
-            sent, (search_like, search_like))
+            sent, (search_like, search_like, search_like))
         return list(result)
 
     def clean_url(self, url):

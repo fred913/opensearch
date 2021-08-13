@@ -38,7 +38,7 @@ VALUES (%s, %s, %s, %s);"""
             cursor.execute(sent, (url, ))
         except MySQLdb._exceptions.OperationalError:
             self.conn = MySQLdb.connect(
-                mysql_config.HOST, mysql_config.USER, mysql_config.PASSWORD, mysql_config.DATABASE, charset='utf8')
+                host=Server.host, port=Server.port, database=Server.database, user=Server.user, password=Server.password, charset='utf8')
             cursor = self.conn.cursor()
             cursor.execute(sent, (url, ))
         result = cursor.fetchall()
@@ -54,19 +54,19 @@ VALUES (%s, %s, %s, %s);"""
                 keywords.append(i)
         if len(orig_keywords) == 0:
             return []
-        sent = """SELECT * FROM DATA WHERE TITLE LIKE %s OR URL LIKE %s;"""
+        sent = """SELECT * FROM DATA WHERE TITLE LIKE %s OR URL LIKE %s OR DESCRIPTION LIKE %s;"""
         search_like = "%%%s%%" % (str("%".join(keywords)),)
         # print(search_like)
         cursor = self.conn.cursor()
         try:
             cursor.execute(
-                sent, (search_like, search_like))
+                sent, (search_like, search_like, search_like))
         except MySQLdb._exceptions.OperationalError:
             self.conn = MySQLdb.connect(
-                mysql_config.HOST, mysql_config.USER, mysql_config.PASSWORD, mysql_config.DATABASE, charset='utf8')
+                host=Server.host, port=Server.port, database=Server.database, user=Server.user, password=Server.password, charset='utf8')
             cursor = self.conn.cursor()
             cursor.execute(
-                sent, (search_like, search_like))
+                sent, (search_like, search_like, search_like))
         result = cursor.fetchall()
         return list(result)
 

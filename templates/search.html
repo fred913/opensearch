@@ -9,6 +9,32 @@
     <script src="/static/jquery/jquery.min.js"></script>
     <script src="/static/mdui/js/mdui.min.js"></script>
     <link rel="stylesheet" href="/static/mdui/css/mdui.min.css">
+    <script>
+        $(() => {
+            $(".dblclick-to-copy").css("user-select", "none");
+            $(".dblclick-to-copy").dblclick((e) => {
+                e.preventDefault();
+                var text = $(e.target).text();
+                console.log(text);
+
+                function copyToClipBoard(content) {
+                    navigator.clipboard.writeText(content)
+                        .then(() => {
+                            mdui.snackbar({
+                                message: "复制成功"
+                            });
+                        }).catch(() => {
+                            mdui.snackbar({
+                                message: "未授权，无法复制"
+                            });
+                        });
+                }
+                copyToClipBoard(text);
+
+                return false;
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -18,8 +44,11 @@
         </div>
         {% for _internal_id, title, url, description in result %}
         <div class="search-result mdui-typo">
-            <h6><a href="{{ url }}" target="_blank" title="点击以在新窗口打开">{{ title }}</a><br><small class="mdui-text-truncate" style="max-width: 80px;" title="双击复制该url">{{ url }}</small></h6>
-            <p><small>{{ description }}</small></p>
+            <h6><a href="{{ url }}" target="_blank" title="点击以在新窗口打开" style="cursor: pointer;">{{ title }}</a><br><small
+                    class="mdui-text-truncate dblclick-to-copy" style="max-width: 80px;" title="双击复制该url"
+                    style="cursor: copy;">{{ url
+                    }}</small></h6>
+            <p><small style="cursor: text;">{{ description }}</small></p>
             <hr />
         </div>
         {% endfor %}
